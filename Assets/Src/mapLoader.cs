@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class mapData
+{
+    [Tooltip("Assign colors to tiles")]
+    public Color32 mapColourAssignments;
+    [Tooltip("Tiles to assosiate with the pixel data (r,g,b values make up up 3 different levels/ y placement of objects")]
+    public GameObject tile;
+}
+
 public class mapLoader : MonoBehaviour
 {
     [Tooltip("Map file to load")]
     public Texture2D map;
-    [Tooltip("Tiles to assosiate with the pixel data (r,g,b values make up up 3 different levels/ y placement of objects")]
-    public GameObject[] Tiles;
+    [Tooltip("Grouped map data format assignments")]
+    public mapData[] mapFormat;
     [Tooltip("Raw pixel data from the map file")]
     public Color32[] pixelData;
     [Tooltip("How far along x,y,z axis to space object placement")]
@@ -30,20 +39,15 @@ public class mapLoader : MonoBehaviour
             position.y = 0.0f;
             position.z = (float)z;
 
-            if (pixelData[e].r == 255)
-            {
-                GameObject temp = Instantiate(Tiles[0], position, Quaternion.identity);
-                down = temp.transform.TransformDirection(-Vector3.up);
-                temp.transform.parent = gameObject.transform;
-                if (Physics.Raycast(temp.transform.position, down, 10))
-                    Debug.Log("Landing!");
-            }else if (pixelData[e].g == 255)
-            {
-                GameObject temp = Instantiate(Tiles[1], position, Quaternion.identity);
-                down = temp.transform.TransformDirection(-Vector3.up);
-                temp.transform.parent = gameObject.transform;
-                if (Physics.Raycast(temp.transform.position, down, 10))
-                    Debug.Log("Landing!");
+            for(int i=0; i < mapFormat.Length; i++)
+            { 
+                if ( mapFormat[i].mapColourAssignments.r == pixelData[e].r && mapFormat[i].mapColourAssignments.g == pixelData[e].g && mapFormat[i].mapColourAssignments.b == pixelData[e].b )
+                {
+                    GameObject temp = Instantiate(mapFormat[i].tile, position, Quaternion.identity);
+                    down = temp.transform.TransformDirection(-Vector3.up);
+                    temp.transform.parent = gameObject.transform;
+                    i = mapFormat.Length;
+                }  
             }
         }
     }

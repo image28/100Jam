@@ -1,4 +1,9 @@
-﻿public class GameManager : Singleton<GameManager>
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameManager : Singleton<GameManager>
 {
     protected GameManager() { } // guarantee this will be always a singleton only - can't use the constructor!
 
@@ -7,6 +12,8 @@
     public MusicPlaylist music;
     public GameParaser gameDataLoader;
     public mapLoader map;
+    public int goal = 0;
+    public Text goalCountText;
 
     void Start()
     {
